@@ -1,20 +1,24 @@
+on appIsRunning(appName)
+	tell application "System Events" to (name of processes) contains appName
+end appIsRunning
+
 on list2string(theList, theDelimiter)
-	
 	-- First, we store in a variable the current delimiter to restore it later
 	set theBackup to AppleScript's text item delimiters
-	
 	-- Set the new delimiter
 	set AppleScript's text item delimiters to theDelimiter
-	
 	-- Perform the conversion
 	set theString to theList as string
-	
 	-- Restore the original delimiter
 	set AppleScript's text item delimiters to theBackup
-	
 	return theString
-	
 end list2string
+
+
+if appIsRunning("iTerm2") is false then
+	return
+end if
+
 
 tell application "iTerm"
 	set tabnames to {}

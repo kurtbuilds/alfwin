@@ -21,12 +21,10 @@ int main(int argc, char *argv[]) {
         CFStringRef winName = (CFStringRef)CFDictionaryGetValue(info, kCGWindowName);
         CFNumberGetValue((CFNumberRef)CFDictionaryGetValue(info, kCGWindowLayer), kCFNumberIntType, &layer);
 
-        if (appName != 0) {
-            if (layer == 0) {
-                CFStringGetCString(appName, b1, 400, kCFStringEncodingUTF8);
-                CFStringGetCString(winName, b2, 400, kCFStringEncodingUTF8);
-                std::cout << b1 << "," << b2 << "\n";
-            }
+        if (appName != 0 && winName != 0 && layer == 0) {
+            CFStringGetCString(appName, b1, 400, kCFStringEncodingUTF8);
+            CFStringGetCString(winName, b2, 400, kCFStringEncodingUTF8);
+            std::cout << b1 << "," << b2 << "\n";
         }
     }
 

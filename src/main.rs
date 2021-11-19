@@ -23,6 +23,7 @@ const VERSION: &'static str = env!("CARGO_PKG_VERSION");
 const SUBCOMMAND_DIR: &'static str = env!("SUBCOMMAND_DIR");
 const SCRIPT_DIR: &'static str = env!("SCRIPT_DIR");
 
+#[derive(Debug)]
 enum TabLauncher {
     Chrome,
     iTerm,
@@ -102,9 +103,12 @@ fn parse_tabs(o: Output, typ: TabLauncher) -> Result<Vec<LaunchAction>, Box<dyn 
     String::from_utf8(o.stdout).map_err(|e| Box::new(e) as Box<dyn Error>)
         .map(|s| s.trim().split("\n").map(String::from)
             .filter_map(|line| {
+                if line == "" {
+                    return None;
+                }
                 let args: Vec<String> = line.splitn(3, ",").map(String::from).collect();
-                let window = args[0].parse::<usize>().unwrap();
-                let tab = args[1].parse::<usize>().unwrap();
+                let window = args[0].parse::<usize>().expect(&format!("Failed to parse window. {:#?}: {:#?}", typ, line));
+                let tab = args[1].parse::<usize>().expect(&format!("Failed to parse tab. {:#?}: {:#?}", typ, line));
                 let name = args[2].to_owned();
                 if seen.contains(&name) {
                     return None;
@@ -123,6 +127,9 @@ fn parse_windows(o: Output) -> Result<Vec<LaunchAction>, Box<dyn Error>> {
     String::from_utf8(o.stdout).map_err(|e| Box::new(e) as Box<dyn Error>)
         .map(|s| s.trim().split("\n").map(String::from)
             .filter_map(|line| {
+                if line == "" {
+                    return None;
+                }
                 let args: Vec<String> = line.splitn(2, ",").map(String::from).collect();
                 let process = args[0].to_owned();
                 let window_name = args[1].to_owned();

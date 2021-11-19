@@ -1,3 +1,7 @@
+on appIsRunning(appName)
+  tell application "System Events" to (name of processes) contains appName
+end appIsRunning
+
 on list2string(theList, theDelimiter)
 
 -- First, we store in a variable the current delimiter to restore it later
@@ -15,6 +19,12 @@ on list2string(theList, theDelimiter)
   return theString
 
 end list2string
+
+
+if appIsRunning("Google Chrome") is false then
+  return
+end if
+
 
 tell application "Google Chrome"
   set tabnames to {}
