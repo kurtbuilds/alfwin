@@ -1,0 +1,16 @@
+[package]
+name = "alfwin"
+version = "0.1.0"
+edition = "2021"
+
+default-run = "alfwin"
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+core-foundation = "0.9.2"
+core-graphics = "0.22.3"
+serde = { version = "^1.0", features = ["derive"] }
+serde_json = { version = "^1.0.71" }
+clap = { version = "3.0.0-beta.4", features = ["color", "env", "suggestions"]}
+dirs = "4.0.0"
+regex = "1.5.4"
