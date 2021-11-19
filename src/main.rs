@@ -232,9 +232,13 @@ fn display_intellij() {
             uid: x.to_owned(),
             typ: AlfredItemType::Default,
             title: x
-                .rsplitn(3, "/")
+                .rsplitn(3, '/')
                 .take(2)
+                .collect::<Vec<&str>>()
+                .into_iter()
                 .rev()
+                .map(|x| x.to_owned())
+                .collect::<Vec<String>>()
                 .join(" ")
                 // .replace("/Users/kurt/work/", "")
                 // .replace("/", " ")
@@ -242,10 +246,13 @@ fn display_intellij() {
             subtitle: "IntelliJ".to_owned(),
             arg: format!("open-intellij \"{}\"", x),
             autocomplete: format!(" {} ", x
-                .rsplitn(3, "/")
+                .rsplitn(3, '/')
                 .skip(1)
-                .next()
-                .unwrap()
+                .take(1)
+                .map(|x| x.to_owned())
+                .collect::<Vec<String>>()
+                .join(" ")
+                .to_string()
             ),
             icon: ItemIcon {
                 typ: ItemIconType::IconForFileAtPath,
