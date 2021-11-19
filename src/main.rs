@@ -232,21 +232,25 @@ fn display_intellij() {
             uid: x.to_owned(),
             typ: AlfredItemType::Default,
             title: x
-                .replace("/Users/kurt/work/", "")
-                .replace("/", " ")
+                .rsplitn(3, "/")
+                .take(2)
+                .rev()
+                .join(" ")
+                // .replace("/Users/kurt/work/", "")
+                // .replace("/", " ")
                 .to_owned(),
             subtitle: "IntelliJ".to_owned(),
             arg: format!("open-intellij \"{}\"", x),
-            autocomplete: x
-                .replace("/Users/kurt/work/", " ")
-                .splitn(2, "/")
+            autocomplete: format!(" {} ", x
+                .rsplitn(3, "/")
+                .skip(1)
                 .next()
                 .unwrap()
-                .to_owned() + " ",
+            ),
             icon: ItemIcon {
                 typ: ItemIconType::IconForFileAtPath,
                 path: home_dir().unwrap().join("Applications").join("JetBrains Toolbox").join("IntelliJ IDEA Ultimate.app").to_str().unwrap().to_string(),
-            }
+            },
         })
         .collect::<Vec<AlfredItem>>();
     let result = AlfredItems { items };
@@ -309,7 +313,7 @@ fn main() {
                     .arg(window)
                     .output()
                     .expect("activate_application_window.scpt failed to start.");
-            },
+            }
             "open-chrome" => {
                 let window = matches.value_of("window").unwrap();
                 let tab = matches.value_of("tab").unwrap();
@@ -319,7 +323,7 @@ fn main() {
                     .arg(tab)
                     .output()
                     .expect("activate_chrome_tab.scpt failed to start.");
-            },
+            }
             "open-iterm" => {
                 let window = matches.value_of("window").unwrap();
                 let tab = matches.value_of("tab").unwrap();
@@ -329,7 +333,7 @@ fn main() {
                     .arg(tab)
                     .output()
                     .expect("activate_iterm.scpt failed to start.");
-            },
+            }
             "open-intellij" => {
                 let path = matches.value_of("path").unwrap();
                 eprintln!("path {}", path);
@@ -338,7 +342,7 @@ fn main() {
                     .arg(path)
                     .output()
                     .unwrap();
-            },
+            }
             "list-intellij" => display_intellij(),
             "debug" => {
                 let result = AlfredItems {
