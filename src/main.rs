@@ -224,17 +224,25 @@ fn display_intellij() {
         .split(|x| *x == b'\n')
         .filter_map(|line| {
             let line = String::from_utf8(line.to_vec()).unwrap();
-            let re = Regex::new(r#"^\s*<entry key="([$a-zA-Z/.0-9]+)">\s*$"#).unwrap();
+            let re = Regex::new(r#"^\s*<entry key="([$a-zA-Z/.0-9_]+)">\s*$"#).unwrap();
             re.captures(&line).map(|caps| caps[1].to_string())
         })
         .map(|s| s.replace("$USER_HOME$", home_dir().unwrap().to_str().unwrap()))
         .map(|x| AlfredItem {
             uid: x.to_owned(),
             typ: AlfredItemType::Default,
-            title: x.to_owned(),
+            title: x
+                .replace("/Users/kurt/work/", "")
+                .replace("/", " ")
+                .to_owned(),
             subtitle: "IntelliJ".to_owned(),
             arg: format!("open-intellij \"{}\"", x),
-            autocomplete: x.to_owned(),
+            autocomplete: x
+                .replace("/Users/kurt/work/", " ")
+                .splitn(2, "/")
+                .next()
+                .unwrap()
+                .to_owned() + " ",
             icon: ItemIcon {
                 typ: ItemIconType::IconForFileAtPath,
                 path: home_dir().unwrap().join("Applications").join("JetBrains Toolbox").join("IntelliJ IDEA Ultimate.app").to_str().unwrap().to_string(),
@@ -248,16 +256,22 @@ fn display_intellij() {
 
 
 fn main() {
+    eprintln!("Launching alfwin");
     let start_time = Instant::now();
     for argument in env::args_os() {
         eprintln!("{:?}", argument);
     }
     let mut args = &mut env::args_os();
-    if let Some(first) = args.peekable().peek() {
-        if first == "--" {
-            args.next();
-        }
-    }
+    // if let Some(first) = args.peekable(). {
+    //     if first == "--" {
+    //         args.next();
+    //     }
+    // }
+    //
+    // for argument in args {
+    //     eprintln!("{:?}", argument);
+    // }
+    // return;
 
     let com_match = App::new("alfwin")
         .version(VERSION)
@@ -293,9 +307,8 @@ fn main() {
                     .arg(PathBuf::from(SCRIPT_DIR).join("activate_application_window.scpt"))
                     .arg(process)
                     .arg(window)
-                    .spawn()
-                    .expect("activate_application_window.scpt failed to start.")
-                    .wait();
+                    .output()
+                    .expect("activate_application_window.scpt failed to start.");
             },
             "open-chrome" => {
                 let window = matches.value_of("window").unwrap();
@@ -304,9 +317,8 @@ fn main() {
                     .arg(PathBuf::from(SCRIPT_DIR).join("activate_chrome_tab.scpt"))
                     .arg(window)
                     .arg(tab)
-                    .spawn()
-                    .expect("activate_chrome_tab.scpt failed to start.")
-                    .wait();
+                    .output()
+                    .expect("activate_chrome_tab.scpt failed to start.");
             },
             "open-iterm" => {
                 let window = matches.value_of("window").unwrap();
@@ -315,17 +327,17 @@ fn main() {
                     .arg(PathBuf::from(SCRIPT_DIR).join("activate_iterm_tab.scpt"))
                     .arg(window)
                     .arg(tab)
-                    .spawn()
-                    .expect("activate_iterm.scpt failed to start.")
-                    .wait();
+                    .output()
+                    .expect("activate_iterm.scpt failed to start.");
             },
             "open-intellij" => {
                 let path = matches.value_of("path").unwrap();
-                Command::new("idea")
-                    .current_dir(PathBuf::from(path))
-                    .spawn()
-                    .expect("activate_iterm.scpt failed to start.")
-                    .wait();
+                eprintln!("path {}", path);
+                Command::new("/usr/local/bin/idea")
+                    .current_dir(path)
+                    .arg(path)
+                    .output()
+                    .unwrap();
             },
             "list-intellij" => display_intellij(),
             "debug" => {

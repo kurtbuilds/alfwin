@@ -4,7 +4,7 @@ on run argv
   set windowName to (item 2 of argv)
 
   tell application "System Events"
-    with timeout of 0.1 seconds
+    with timeout of 0.5 seconds
       tell process proc to perform action "AXRaise" of window windowName
     end timeout
   end tell
@@ -12,5 +12,7 @@ on run argv
   tell application proc
     activate
   end tell
+
+  delay 1
 
 end run
