@@ -9,6 +9,8 @@ default-run = "alfwin"
 [dependencies]
 core-foundation = "0.9.2"
 core-graphics = "0.22.3"
+objc_id = "0.1.1"
+objc-foundation = "0.1.1"
 serde = { version = "^1.0", features = ["derive"] }
 serde_json = { version = "^1.0.71" }
 clap = { version = "3.0.0-beta.4", features = ["color", "env", "suggestions"]}
