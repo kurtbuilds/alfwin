@@ -14,12 +14,15 @@ int main(int argc, char *argv[]) {
     CFIndex numWindows = CFArrayGetCount( windowList );
 
     for( int i = 0; i < (int)numWindows; i++ ) {
-        CFDictionaryRef info = (CFDictionaryRef)CFArrayGetValueAtIndex(
-                windowList, i);
+        CFDictionaryRef info = (CFDictionaryRef)CFArrayGetValueAtIndex(windowList, i);
 
         CFStringRef appName = (CFStringRef)CFDictionaryGetValue(info, kCGWindowOwnerName);
         CFStringRef winName = (CFStringRef)CFDictionaryGetValue(info, kCGWindowName);
         CFNumberGetValue((CFNumberRef)CFDictionaryGetValue(info, kCGWindowLayer), kCFNumberIntType, &layer);
+
+//        std::cout << "appName " << appName << "\n";
+//        std::cout << "winName " << winName << "\n";
+//        std::cout << "layer " << layer << "\n";
 
         if (appName != 0 && winName != 0 && layer == 0) {
             CFStringGetCString(appName, b1, 400, kCFStringEncodingUTF8);

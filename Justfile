@@ -1,5 +1,8 @@
 set dotenv-load := false
 
+help:
+    just --list --unsorted
+
 build_osa target src:
     checkexec {{target}} {{src}} -- osacompile -o {{target}} {{src}}
 
@@ -25,21 +28,21 @@ build: build_cpp build_scripts
     SUBCOMMAND_DIR=$(pwd)/build SCRIPT_DIR=$(pwd)/build checkexec target/debug/alfwin src/main.rs -- cargo build
 
 release: build_cpp build_scripts
-    checkexec /usr/local/bin/__get_window_names --infer -- cp build/get_window_names /usr/local/bin/__get_window_names
+    checkexec /usr/local/bin/__get_window_names build/__get_window_names -- sudo cp build/__get_window_names /usr/local/bin/__get_window_names
 
-    mkdir -p /usr/local/opt/alfwin/
-    @just copy_if_updated /usr/local/opt/alfwin/get_iterm_tabs.scpt build/get_iterm_tabs.scpt
-    @just copy_if_updated /usr/local/opt/alfwin/activate_iterm_tab.scpt build/activate_iterm_tab.scpt
+    sudo mkdir -p /usr/local/opt/alfwin/
+    @sudo just copy_if_updated /usr/local/opt/alfwin/get_iterm_tabs.scpt build/get_iterm_tabs.scpt
+    @sudo just copy_if_updated /usr/local/opt/alfwin/activate_iterm_tab.scpt build/activate_iterm_tab.scpt
 
-    @just copy_if_updated /usr/local/opt/alfwin/get_chrome_tabs.scpt build/get_chrome_tabs.scpt
-    @just copy_if_updated /usr/local/opt/alfwin/activate_chrome_tab.scpt build/activate_chrome_tab.scpt
+    @sudo just copy_if_updated /usr/local/opt/alfwin/get_chrome_tabs.scpt build/get_chrome_tabs.scpt
+    @sudo just copy_if_updated /usr/local/opt/alfwin/activate_chrome_tab.scpt build/activate_chrome_tab.scpt
 
-    @just copy_if_updated /usr/local/opt/alfwin/activate_application_window.scpt build/activate_application_window.scpt
+    @sudo just copy_if_updated /usr/local/opt/alfwin/activate_application_window.scpt build/activate_application_window.scpt
 
     SUBCOMMAND_DIR=/usr/local/bin/ SCRIPT_DIR=/usr/local/opt/alfwin/ cargo build --release
 
 install: release
-    @just copy_if_updated /usr/local/bin/alfwin target/release/alfwin
+    @sudo just copy_if_updated /usr/local/bin/alfwin ${CARGO_TARGET_DIR:-target}/release/alfwin
 
 run *args: build
-    ./target/debug/alfwin {{args}}
+    ${CARGO_TARGET_DIR:-target}/debug/alfwin {{args}}

@@ -1,3 +1,16 @@
+# Installation
+
+Run this command:
+
+```bash
+just install
+```
+
+After that, *manually* go to System Preferences -> Security & Privacy -> Privacy. Add the Screen Recording permission to
+any `.app` that will run the alfwin binary. In general, this will be `Alfred 4` and `iTerm2` when in development.
+
+That setting should cause the program to return valid results for window names.
+
 # Strategy
 
 1. Two possible strategies
@@ -28,7 +41,7 @@
       Time (mean ± σ):      1.952 s ±  0.016 s    [User: 0.079 s, System: 0.030 s]
       Range (min … max):    1.945 s …  1.997 s    10 runs
 
-      Warning: Statistical outliers were detected. Consider re-running this benchmark on a quiet PC without any interferences from other programs. It might help to use the '--warmup' or '--prepare' options.
+      Warning: Statistical outliers were detected. Consider re-running this benchmark on a quiet PC without any interferences from other programs. It might help to use the '--warmup' or '--prepare' OPTIONS.
 
     Summary
       'osascript winnames.scpt' ran

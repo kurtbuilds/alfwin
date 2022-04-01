@@ -1,4 +1,5 @@
-use serde::{Serialize};
+/// Models for Alfred interop
+use serde::Serialize;
 
 #[derive(Serialize)]
 pub enum AlfredItemType {
@@ -9,7 +10,6 @@ pub enum AlfredItemType {
     #[serde(rename(serialize = "file:skipcheck"))]
     FileSkipCheck,
 }
-
 
 #[derive(Serialize)]
 pub enum ItemIconType {
@@ -26,7 +26,6 @@ pub struct ItemIcon {
     pub path: String,
 }
 
-
 #[derive(Serialize)]
 pub struct AlfredItem {
     pub uid: String,
@@ -40,8 +39,7 @@ pub struct AlfredItem {
     pub icon: ItemIcon,
 }
 
-
 #[derive(Serialize)]
 pub struct AlfredItems {
-    pub items: Vec<AlfredItem>
+    pub items: Vec<AlfredItem>,
 }
