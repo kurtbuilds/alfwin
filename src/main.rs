@@ -152,43 +152,6 @@ fn parse_tabs(o: Output, typ: TabLauncher) -> Result<Vec<LaunchAction>, Box<dyn 
         })
 }
 
-fn parse_windows(o: Output) -> Result<Vec<LaunchAction>, Box<dyn Error>> {
-    let mut seen = BTreeSet::new();
-    String::from_utf8(o.stdout)
-        .map_err(|e| Box::new(e) as Box<dyn Error>)
-        .map(|s| {
-            s.trim()
-                .split("\n")
-                .map(String::from)
-                .filter_map(|line| {
-                    if line == "" {
-                        return None;
-                    }
-                    let args: Vec<String> = line.splitn(2, ",").map(String::from).collect();
-                    let process = args[0].to_owned();
-                    let window_name = args[1].to_owned();
-                    let key = format!("{}{}", process, window_name);
-                    if process == "Google Chrome" || process == "iTerm2" || seen.contains(&key) {
-                        None
-                    } else {
-                        seen.insert(key);
-                        Some(LaunchAction::Window(LaunchWindow {
-                            process,
-                            window_name,
-                        }))
-                    }
-                })
-                .collect()
-        })
-}
-
-fn time() -> u128 {
-    SystemTime::now()
-        .duration_since(UNIX_EPOCH)
-        .expect("Time went backwards")
-        .as_millis()
-}
-
 fn icon_lookup() -> BTreeMap<String, String> {
     let home_dir = dirs::home_dir().unwrap();
 
@@ -250,11 +213,6 @@ fn display_results() {
         .spawn()
         .expect("get_iterm_tabs.scpt failed to start.");
 
-    // let windows = Command::new(PathBuf::from(SUBCOMMAND_DIR).join("__get_window_names"))
-    //     .stdout(Stdio::piped())
-    //     .spawn()
-    //     .expect("__get_window_names failed to start.");
-
     let windows = get_window_names()
         .into_iter()
         .map(|w| {
@@ -273,10 +231,6 @@ fn display_results() {
         .wait_with_output()
         .map(|o| parse_tabs(o, TabLauncher::iTerm).unwrap())
         .unwrap();
-    // let windows = windows
-    //     .wait_with_output()
-    //     .map(|x| parse_windows(x).unwrap())
-    //     .unwrap();
 
     let windows_and_tabs = windows
         .into_iter()
@@ -342,11 +296,7 @@ fn display_intellij() {
             ),
             icon: ItemIcon {
                 typ: ItemIconType::IconForFileAtPath,
-                path: home_dir()
-                    .unwrap()
-                    .join("Applications")
-                    .join("JetBrains Toolbox")
-                    .join("IntelliJ IDEA Ultimate.app")
+                path: PathBuf::from("/Applications/IntelliJ IDEA.app")
                     .to_str()
                     .unwrap()
                     .to_string(),
@@ -359,22 +309,7 @@ fn display_intellij() {
 }
 
 fn main() {
-    eprintln!("Launching alfwin");
     let start_time = Instant::now();
-    for argument in env::args_os() {
-        eprintln!("{:?}", argument);
-    }
-    let mut args = &mut env::args_os();
-    // if let Some(first) = args.peekable(). {
-    //     if first == "--" {
-    //         args.next();
-    //     }
-    // }
-    //
-    // for argument in args {
-    //     eprintln!("{:?}", argument);
-    // }
-    // return;
 
     let com_match = App::new("alfwin")
         .version(VERSION)
@@ -397,7 +332,7 @@ fn main() {
         .subcommand(App::new("open-intellij").arg(Arg::new("path")))
         .subcommand(App::new("list-intellij"))
         .subcommand(App::new("debug"))
-        .get_matches_from(args);
+        .get_matches();
 
     match com_match.subcommand() {
         None => display_results(),

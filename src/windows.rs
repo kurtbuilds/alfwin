@@ -90,11 +90,19 @@ pub fn get_window_names() -> Vec<WindowName> {
         let mut _owner_name: *const c_void = std::ptr::null();
         let mut _window_name: *const c_void = std::ptr::null();
 
-        let app_name = get_dict_string(dic_ref, unsafe { kCGWindowOwnerName }).unwrap();
-        let win_name = get_dict_string(dic_ref, unsafe { kCGWindowName }).unwrap();
-        let layer = get_dict_number(dic_ref, unsafe { kCGWindowLayer });
-
-        if layer.is_none() || layer.unwrap() != 0 {
+        let app_name = match get_dict_string(dic_ref, unsafe { kCGWindowOwnerName }) {
+            None => continue,
+            Some(s) => s,
+        };
+        let win_name = match get_dict_string(dic_ref, unsafe { kCGWindowName }) {
+            None => continue,
+            Some(s) => s,
+        };
+        let layer = match get_dict_number(dic_ref, unsafe { kCGWindowLayer }) {
+            None => continue,
+            Some(s) => s,
+        };
+        if layer != 0 {
             continue;
         }
         result.push(WindowName { app_name, win_name });

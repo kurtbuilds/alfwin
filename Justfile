@@ -1,5 +1,8 @@
 set dotenv-load := false
 
+export SUBCOMMAND_DIR := "$(pwd)/build"
+export SCRIPT_DIR := "$(pwd)/build"
+
 help:
     just --list --unsorted
 
@@ -24,11 +27,14 @@ build_scripts: build_dir
 
     @just build_osa build/activate_application_window.scpt src/applescript/activate_application_window.applescript
 
-build: build_cpp build_scripts
-    SUBCOMMAND_DIR=$(pwd)/build SCRIPT_DIR=$(pwd)/build checkexec target/debug/alfwin src/main.rs -- cargo build
+build: build_scripts
+    cargo build
 
-release: build_cpp build_scripts
-    checkexec /usr/local/bin/__get_window_names build/__get_window_names -- sudo cp build/__get_window_names /usr/local/bin/__get_window_names
+run *args='':
+    cargo run --release -- {{args}}
+
+release: build_scripts
+    # checkexec /usr/local/bin/__get_window_names build/__get_window_names -- sudo cp build/__get_window_names /usr/local/bin/__get_window_names
 
     sudo mkdir -p /usr/local/opt/alfwin/
     @sudo just copy_if_updated /usr/local/opt/alfwin/get_iterm_tabs.scpt build/get_iterm_tabs.scpt
@@ -43,6 +49,3 @@ release: build_cpp build_scripts
 
 install: release
     @sudo just copy_if_updated /usr/local/bin/alfwin ${CARGO_TARGET_DIR:-target}/release/alfwin
-
-run *args: build
-    ${CARGO_TARGET_DIR:-target}/debug/alfwin {{args}}
