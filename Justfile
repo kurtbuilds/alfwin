@@ -36,16 +36,16 @@ run *args='':
 release: build_scripts
     # checkexec /usr/local/bin/__get_window_names build/__get_window_names -- sudo cp build/__get_window_names /usr/local/bin/__get_window_names
 
-    sudo mkdir -p /usr/local/opt/alfwin/
-    @sudo just copy_if_updated /usr/local/opt/alfwin/get_iterm_tabs.scpt build/get_iterm_tabs.scpt
-    @sudo just copy_if_updated /usr/local/opt/alfwin/activate_iterm_tab.scpt build/activate_iterm_tab.scpt
+    sudo mkdir -p /opt/alfwin/
+    @sudo just copy_if_updated /opt/alfwin/get_iterm_tabs.scpt build/get_iterm_tabs.scpt
+    @sudo just copy_if_updated /opt/alfwin/activate_iterm_tab.scpt build/activate_iterm_tab.scpt
 
-    @sudo just copy_if_updated /usr/local/opt/alfwin/get_chrome_tabs.scpt build/get_chrome_tabs.scpt
-    @sudo just copy_if_updated /usr/local/opt/alfwin/activate_chrome_tab.scpt build/activate_chrome_tab.scpt
+    @sudo just copy_if_updated /opt/alfwin/get_chrome_tabs.scpt build/get_chrome_tabs.scpt
+    @sudo just copy_if_updated /opt/alfwin/activate_chrome_tab.scpt build/activate_chrome_tab.scpt
 
-    @sudo just copy_if_updated /usr/local/opt/alfwin/activate_application_window.scpt build/activate_application_window.scpt
+    @sudo just copy_if_updated /opt/alfwin/activate_application_window.scpt build/activate_application_window.scpt
 
-    SUBCOMMAND_DIR=/usr/local/bin/ SCRIPT_DIR=/usr/local/opt/alfwin/ cargo build --release
+    SUBCOMMAND_DIR=/usr/local/bin/ SCRIPT_DIR=/opt/alfwin/ cargo build --release
 
 install: release
     @sudo just copy_if_updated /usr/local/bin/alfwin ${CARGO_TARGET_DIR:-target}/release/alfwin
